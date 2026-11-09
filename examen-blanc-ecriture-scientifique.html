@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Examen blanc : Écriture scientifique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f9ff;--ink:#1f2350;--card:#fff;--line:#d3def5;--mut:#5b6190;--acc:#4b3fd6;--onacc:#fff;--ok:#1a8a5a;--ko:#c93a4f;--wn:#d9822b;--mg:#e8708a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12142b;--ink:#e6e9ff;--card:#1b1e3d;--line:#2b3060;--mut:#9aa1d6;--acc:#9d93ff;--onacc:#14163a;--ok:#4cd493;--ko:#ff7d90;--wn:#f0a458;--mg:#b4506a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12142b;--ink:#e6e9ff;--card:#1b1e3d;--line:#2b3060;--mut:#9aa1d6;--acc:#9d93ff;--onacc:#14163a;--ok:#4cd493;--ko:#ff7d90;--wn:#f0a458;--mg:#b4506a;color-scheme:dark}
+html{scroll-padding-top:calc(90px + env(safe-area-inset-top,0px))}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Nunito,system-ui,sans-serif;background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 32px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+h1,h2,h3{font-family:"Bricolage Grotesque",Nunito,sans-serif;margin:0;line-height:1.15}
+main{max-width:740px;margin:0 auto;padding:20px 18px 80px 34px;border-left:2px solid var(--mg);min-height:100vh}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0}
+button{font:inherit;font-weight:800;border:0;border-radius:10px;padding:12px 22px;background:var(--acc);color:var(--onacc);cursor:pointer}
+button.alt{background:transparent;color:var(--acc);border:2px solid var(--acc)}
+button:focus-visible,input:focus-visible,select:focus-visible,label:focus-within{outline:3px solid var(--wn);outline-offset:2px}
+header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:11;background:var(--card);border-bottom:2px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px}
+#clk{font:800 28px "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+#clk.w{color:var(--ko)}
+.sm{color:var(--mut);font-size:14px}
+.pt{background:var(--acc);color:var(--onacc);border-radius:99px;padding:1px 10px;font-size:13px;font-weight:800;white-space:nowrap}
+.q{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 18px;margin:12px 0}
+.q .h{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-weight:800}
+.q.good{border-left:6px solid var(--ok)}.q.mid{border-left:6px solid var(--wn)}.q.bad{border-left:6px solid var(--ko)}
+.opt{display:block;padding:9px 12px;margin:6px 0;border:1.5px solid var(--line);border-radius:9px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent)}
+.opt input{margin-right:8px;accent-color:var(--acc)}
+select,input[type=text]{font:inherit;padding:9px 12px;border:2px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink)}
+input[type=text]{width:130px}input.n{width:70px;padding:4px 8px;vertical-align:top}
+.it{display:flex;align-items:center;gap:10px;margin:8px 0;flex-wrap:wrap}.it>span{min-width:130px;font-weight:600}
+sup{font-size:.7em}
+.ex{color:var(--mut);font-size:15px;margin-top:6px}
+.big{font:800 64px "Bricolage Grotesque",sans-serif;color:var(--acc);line-height:1}
+.bar2{height:14px;background:var(--line);border-radius:8px;overflow:hidden;margin:4px 0 2px}
+.bar2 b{display:block;height:100%}
+.row{display:flex;justify-content:space-between;gap:10px;font-weight:800}
+#msg{color:var(--wn);font-weight:800;margin:10px 0}
+ul{padding-left:20px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const R=a=>a[Math.floor(Math.random()*a.length)];
+const sh=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+const dec=v=>String(v).replace(".",",");
+const M=s=>String(s).replace(/-/g,"−");
+const E=(a,n)=>`${a} × 10<sup>${M(n)}</sup>`;
+const sp=s=>s.replace(/\B(?=(\d{3})+(?!\d))/g,"\u00a0");
+const C=(part,pts,html,ok,bad,expl)=>{const o=sh([ok,...bad]);return{part,pts,html,t:"c",opts:o,ans:o.indexOf(ok),show:ok,expl}};
+const S=(part,pts,html,items,opts)=>({part,pts,html,t:"s",items,opts});
+const N=(part,pts,html,val,show,expl)=>({part,pts,html,t:"n",val,show,expl});
+const W=(part,pts,html,a,n,expl)=>({part,pts,html,t:"e",a,n,show:E(dec(a),n),expl});
+const PARTS=["Reconnaître une écriture scientifique","Grands nombres","Petits nombres","Corriger et transformer"];
+const TIPS=[
+"Écriture scientifique = a × 10ⁿ avec 1 ≤ a < 10 (a décimal) et n entier relatif. Vérifie trois choses : la forme avec une puissance de 10, a entre 1 (inclus) et 10 (exclu), n entier.",
+"Grand nombre : place la virgule après le premier chiffre pour obtenir a, puis compte le décalage vers la gauche : l’exposant est positif (1 785 000 000 = 1,785 × 10⁹).",
+"Petit nombre : place la virgule après le premier chiffre non nul, puis compte le décalage vers la droite : l’exposant est négatif (0,000028 = 2,8 × 10⁻⁵).",
+"Si a n’est pas entre 1 et 10 : réécris a en écriture scientifique, puis regroupe les puissances de 10 (10² × 10⁵ = 10⁷). Grand nombre : exposant positif ; petit nombre : exposant négatif."];
+const MEN=s=>s>=16?"Très bien 🎉":s>=14?"Bien 👏":s>=12?"Assez bien 👍":s>=10?"Passable : tu y es presque":"À retravailler, mais tu vas progresser";
+function big(ms,ns){const m=R(ms),n=R(ns),d=m.replace(",",""),k=m.length-m.indexOf(",")-1,x=sp(d+"0".repeat(n-k));
+ return W(1,2,`Donne l’écriture scientifique de <b>${x}</b>.`,m,n,`${x} : on place la virgule après le premier chiffre (${m}), puis on compte le décalage de ${n} rangs vers la gauche : ${E(m,n)}.`)}
+function small(ms,ns){const m=R(ms),n=R(ns),d=m.replace(",",""),x="0,"+"0".repeat(n-1)+d;
+ return W(2,2,`Donne l’écriture scientifique de <b>${x}</b>.`,m,-n,`${x} : on place la virgule après le premier chiffre non nul (${m}), puis on compte le décalage de ${n} rangs vers la droite : ${E(m,-n)}.`)}
+function gen(){
+ const q=[];
+ q.push(C(0,1,"Dans l’écriture scientifique a × 10<sup>n</sup>, le nombre décimal a vérifie :","1 ≤ a < 10",["0 ≤ a < 1","1 < a ≤ 10","a ≥ 10"],"a doit être supérieur ou égal à 1 et strictement inférieur à 10."));
+ const T=[
+  ()=>{const a=R(["7,15","2,4","5,08","1,9","8,6"]),n=R([3,-2,5,-4,8]);return{l:E(a,n),c:"Oui",e:`a = ${a} vérifie 1 ≤ a < 10 et ${M(n)} est un entier relatif : c’est une écriture scientifique.`}},
+  ()=>{const a=R(["0,33","0,75","0,4"]),n=R([6,4,-3]);return{l:E(a,n),c:"Non",e:`a = ${a} est inférieur à 1 : la condition 1 ≤ a n’est pas respectée.`}},
+  ()=>{const a=R(["13","158,2","25,6","42"]),n=R([2,5,-1]);return{l:E(a,n),c:"Non",e:`a = ${a} n’est pas strictement inférieur à 10.`}},
+  ()=>{const a=R(["13","5,2","2,5"]),b=R([7,3,2,5]);return{l:`${a} × ${b}<sup>${R([2,3])}</sup>`,c:"Non",e:`Ce n’est pas de la forme a × 10<sup>n</sup> : la puissance n’est pas une puissance de 10.`}}];
+ q.push(S(0,4,"Pour chaque nombre, dis si c’est une écriture scientifique.",sh(T).map(f=>f()),["Oui","Non"]));
+ q.push(C(0,1,"Dans l’écriture scientifique a × 10<sup>n</sup>, l’exposant n est :","un entier relatif (positif, négatif ou nul)",["un entier positif uniquement","un nombre décimal entre 1 et 10","toujours égal à 10"],"n est un entier relatif."));
+ q.push(big(["1,785","2,56","9,04","3,6"],[6,7,8,9]));
+ q.push(big(["4,2","7,3","2,5","6,4"],[4,5,6,7]));
+ const m=R(["3,2","4,5","6,7","8,1"]),n=R([3,4,5,6]),v=Math.round(parseFloat(m.replace(",","."))*10**n);
+ q.push(N(1,1,`Écris ${E(m,n)} en écriture décimale.`,v,sp(String(v)),`${E(m,n)} : on décale la virgule de ${n} rangs vers la droite : ${sp(String(v))}.`));
+ q.push(small(["2,8","4,7","3,6","5,2","9,1"],[4,5,6]));
+ q.push(small(["3,45","7,12","1,08","5,63"],[2,3,4]));
+ let d=R(["1582","3745","6208","8153"]),s=R([1,2]),mm=R([3,4,5,6]);
+ const x=d.slice(0,1+s)+","+d.slice(1+s),a1=d[0]+","+d.slice(1);
+ q.push(W(3,2,`Donne l’écriture scientifique de <b>A = ${E(x,mm)}</b>.<div class="sm">Ce n’est pas encore une écriture scientifique : a est supérieur à 10.</div>`,a1,mm+s,`${x} = ${E(a1,s)}, donc A = ${a1} × 10<sup>${s}</sup> × 10<sup>${mm}</sup> = ${E(a1,mm+s)}.`));
+ d=R(["33","47","82","65"]);s=R([1,2]);mm=R([5,6,7,8]);
+ const x2="0,"+"0".repeat(s-1)+d,a2=d[0]+","+d.slice(1);
+ q.push(W(3,2,`Donne l’écriture scientifique de <b>B = ${E(x2,mm)}</b>.<div class="sm">Ce n’est pas encore une écriture scientifique : a est inférieur à 1.</div>`,a2,mm-s,`${x2} = ${E(a2,-s)}, donc B = ${a2} × 10<sup>${M(-s)}</sup> × 10<sup>${mm}</sup> = ${E(a2,mm-s)}.`));
+ q.push(R([0,1])?C(3,1,"Pour un très grand nombre, l’exposant de 10 en écriture scientifique est :","positif",["négatif","nul","toujours égal à 1"],"Grand nombre : exposant positif (ex. 10⁹)."):C(3,1,"Pour un très petit nombre (inférieur à 1), l’exposant de 10 en écriture scientifique est :","négatif",["positif","nul","toujours égal à 1"],"Petit nombre : exposant négatif (ex. 10⁻⁵)."));
+ return q;
+}
+function pn(s){s=String(s).replace(/[\s\u00a0\u202f]/g,"").replace(",",".").replace(/[−–]/g,"-");if(!s)return NaN;return Number(s)}
+function sc(q,a){
+ if(q.t=="c")return a===q.ans?q.pts:0;
+ if(q.t=="s")return q.items.reduce((s,it,j)=>s+(a[j]===it.c?q.pts/q.items.length:0),0);
+ if(q.t=="n")return Math.abs(pn(a)-q.val)<1e-9?q.pts:0;
+ const ok=Math.abs(pn(a.a)-pn(q.a))<1e-9;return ok?q.pts/2+(pn(a.n)===q.n?q.pts/2:0):0;
+}
+const DUR=2100;let qs,ans,t0,tid,conf;
+const hist=()=>{try{return JSON.parse(localStorage.getItem("aya_sci_h")||"[]")}catch(e){return[]}};
+const save=r=>{try{localStorage.setItem("aya_sci_h",JSON.stringify([...hist(),r].slice(-10)))}catch(e){}};
+function intro(){
+ const h=hist();
+ $("#app").innerHTML=`<main><h1>Examen blanc<br>L’écriture scientifique</h1><p class="sm">Pour Aya · 3<sup>e</sup> · Chapitre sur les puissances</p>
+ <div class="card"><h3>Comme en classe</h3><ul><li>Durée : <b>35 minutes</b>. Quand le temps est écoulé, la copie est rendue automatiquement.</li><li>11 questions sur <b>20 points</b> : reconnaître une écriture scientifique, grands nombres, petits nombres, corrections d’écritures.</li><li>Sans cours. Garde un brouillon.</li><li>Pour donner une écriture scientifique, remplis les deux cases : le nombre <b>a</b> (avec une virgule) et l’exposant <b>n</b> (avec un signe − s’il est négatif).</li><li>À la fin : ta note, ton score en % par partie, et la correction détaillée.</li><li>Les nombres changent à chaque tentative.</li></ul></div>
+ ${h.length?`<div class="card"><h3>Tes tentatives</h3>${h.map((r,i)=>`<div class="row"><span>Tentative ${i+1} · ${r.d}</span><span>${dec(r.s)}/20</span></div>`).join("")}</div>`:""}
+ <button onclick="start()">Commencer l’examen</button></main>`;
+}
+function start(){qs=gen();ans=qs.map(q=>q.t=="s"?Array(q.items.length).fill(""):q.t=="e"?{a:"",n:""}:q.t=="n"?"":null);conf=false;t0=Date.now();clearInterval(tid);tid=setInterval(tick,500);exam();window.scrollTo(0,0)}
+function exam(){
+ let last=-1,html="";
+ qs.forEach((q,i)=>{
+  if(q.part!==last){last=q.part;const mx=qs.filter(x=>x.part==q.part).reduce((a,x)=>a+x.pts,0);html+=`<h2 style="margin-top:28px">Partie ${"ABCD"[q.part]} : ${PARTS[q.part]} <span class="pt">${mx} pts</span></h2>`}
+  html+=`<div class="q"><div class="h"><span>Question ${i+1}</span><span class="pt">${q.pts} pt${q.pts>1?"s":""}</span></div><div>${q.html}</div>`+
+  (q.t=="c"?q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" onchange="ans[${i}]=${j};prog()">${o}</label>`).join(""):
+   q.t=="s"?q.items.map((it,j)=>`<div class="it"><span>${it.l}</span><select aria-label="Réponse ${j+1}" onchange="ans[${i}][${j}]=this.value;prog()"><option value="">— choisir —</option>${q.opts.map(o=>`<option>${o}</option>`).join("")}</select></div>`).join(""):
+   q.t=="n"?`<div class="it"><input type="text" inputmode="decimal" aria-label="Réponse" autocomplete="off" oninput="ans[${i}]=this.value;prog()"></div>`:
+   `<div class="it"><input type="text" inputmode="decimal" aria-label="Nombre a" autocomplete="off" oninput="ans[${i}].a=this.value;prog()"> <span style="min-width:0">× 10</span><sup><input type="text" class="n" aria-label="Exposant n" autocomplete="off" oninput="ans[${i}].n=this.value;prog()"></sup></div>`)+`</div>`;
+ });
+ $("#app").innerHTML=`<header class="bar"><div><b>Examen blanc · Écriture scientifique</b><div class="sm" id="pg"></div></div><div id="clk">35:00</div></header><main>${html}<div id="msg" role="status"></div><button onclick="sub()">Rendre ma copie</button></main>`;
+ prog();tick();
+}
+const blank=(q,a)=>q.t=="c"?a===null:q.t=="s"?a.some(x=>x===""):q.t=="n"?a.trim()==="":a.a.trim()===""||a.n.trim()==="";
+const miss=()=>qs.filter((q,i)=>blank(q,ans[i])).length;
+function prog(){conf=false;const e=$("#msg");if(e)e.textContent="";$("#pg").textContent=`${qs.length-miss()} / ${qs.length} questions complètes`}
+function tick(){const l=Math.max(0,DUR-Math.floor((Date.now()-t0)/1000));const c=$("#clk");if(!c)return;c.textContent=String(Math.floor(l/60)).padStart(2,"0")+":"+String(l%60).padStart(2,"0");c.className=l<=300?"w":"";if(l<=0)finish(true)}
+function sub(){if(miss()>0&&!conf){conf=true;$("#msg").textContent=`Il reste ${miss()} question(s) incomplète(s). Appuie encore sur « Rendre ma copie » pour confirmer.`;return}finish(false)}
+const esc=s=>String(s).replace(/[&<>]/g,"");
+function finish(auto){
+ clearInterval(tid);
+ const used=Math.min(DUR,Math.floor((Date.now()-t0)/1000));
+ const ea=qs.map((q,i)=>sc(q,ans[i]));
+ const got=[0,0,0,0],mx=[0,0,0,0];
+ qs.forEach((q,i)=>{mx[q.part]+=q.pts;got[q.part]+=ea[i]});
+ const s=got.reduce((a,b)=>a+b,0),pc=got.map((g,i)=>Math.round(100*g/mx[i]));
+ const h=hist(),prev=h.length?h[h.length-1].s:null;
+ save({d:new Date().toLocaleDateString("fr-FR"),s,pc});
+ const col=p=>p>=80?"var(--ok)":p>=50?"var(--wn)":"var(--ko)";
+ const lab=p=>p>=80?"Solide":p>=50?"Presque, à consolider":"À revoir en priorité";
+ const weak=pc.map((p,i)=>i).filter(i=>pc[i]<80).sort((a,b)=>pc[a]-pc[b]);
+ $("#app").innerHTML=`<main><h1>Ta copie corrigée</h1>
+ ${auto?`<p style="color:var(--ko);font-weight:800">Temps écoulé : la copie a été rendue automatiquement.</p>`:""}
+ <div class="card"><div class="big">${dec(s)}<span style="font-size:32px">/20</span></div><h3 style="margin-top:6px">${MEN(s)}</h3>
+ <p class="sm">Temps utilisé : ${Math.floor(used/60)} min ${used%60} s${prev!==null?` · Tentative précédente : ${dec(prev)}/20 (${s-prev>=0?"+":""}${dec(Math.round((s-prev)*10)/10)})`:""}</p></div>
+ <h2>Ton score par partie</h2>
+ ${pc.map((p,i)=>`<div class="card" style="margin:10px 0"><div class="row"><span>${PARTS[i]}</span><span style="color:${col(p)}">${p} %</span></div><div class="bar2"><b style="width:${p}%;background:${col(p)}"></b></div><div class="sm">${dec(got[i])}/${dec(mx[i])} pts · ${lab(p)}</div></div>`).join("")}
+ <div class="card"><h3>Ce qu’il faut retravailler</h3>${weak.length?`<ul>${weak.map(i=>`<li><b>${PARTS[i]}</b> (${pc[i]} %) : ${TIPS[i]}</li>`).join("")}</ul>`:`<p>Toutes les parties sont solides. Bravo !</p>`}</div>
+ <h2>Correction détaillée</h2>
+ ${qs.map((q,i)=>{const e=ea[i],cl=e>=q.pts?"good":e>0?"mid":"bad",a=ans[i];let b,x=q.expl?`<div class="ex">${q.expl}</div>`:"";
+  if(q.t=="c")b=`<div class="sm">Ta réponse : ${a===null?"(pas de réponse)":q.opts[a]}</div>${e?"":`<div>Bonne réponse : <b>${q.show}</b></div>`}`;
+  else if(q.t=="s")b=q.items.map((it,j)=>{const o=a[j]===it.c;return `<div>${o?"✓":"✗"} ${it.l} : ${a[j]||"(pas de réponse)"}${o?"":` → <b>${it.c}</b>`}<div class="ex">${it.e}</div></div>`}).join("");
+  else if(q.t=="n")b=`<div class="sm">Ta réponse : ${a.trim()?esc(a):"(pas de réponse)"}</div><div>Bonne réponse : <b>${q.show}</b></div>`;
+  else b=`<div class="sm">Ta réponse : ${a.a.trim()?esc(a.a)+" × 10<sup>"+esc(a.n)+"</sup>":"(pas de réponse)"}</div><div>Bonne réponse : <b>${q.show}</b></div>`;
+  return `<div class="q ${cl}"><div class="h"><span>Question ${i+1}</span><span class="pt">${dec(e)}/${q.pts}</span></div><div>${q.html.replace(/<div class="sm">.*?<\/div>/,"")}</div>${b}${x}</div>`}).join("")}
+ <button onclick="start()">Refaire un examen (nouveaux nombres)</button> <button class="alt" onclick="intro()">Accueil</button></main>`;
+ window.scrollTo(0,0);
+}
+intro();
+</script>
+</body>
+</html>
